@@ -22,12 +22,14 @@ import com.solvd.itcompany.model.SalesTeam.Sales;
 import com.solvd.itcompany.model.SalesTeam.SalesHardware;
 import com.solvd.itcompany.model.SalesTeam.SalesSoftware;
 import com.solvd.itcompany.model.Service.AccessService;
+import com.solvd.itcompany.model.Service.FileService;
 import com.solvd.itcompany.model.Support.ClientSupport;
 import com.solvd.itcompany.model.Support.SupportHardware;
 import com.solvd.itcompany.model.Support.SupportSoftware;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.util.*;
 
 import static com.solvd.itcompany.model.Service.AccessService.checkDepartmentAccess;
@@ -214,10 +216,20 @@ public class Main {
 
         ProjectPriority currentTask = ProjectPriority.HIGH;
         AccessService.processTicket(currentTask);
-
-
         AccessService.processTicket(ProjectPriority.URGENT);
 
+
+        String inputPath = "src/main/resources/words.txt";
+        String outputPath = "src/main/resources/result_count.txt";
+
+        String[] wordsToFind = {"Responsibility", "Career", "Chaos", "Evolution", "Competence"};
+
+        try {
+            FileService.countSpecialWords(inputPath, outputPath, wordsToFind);
+            System.out.println("Completed successfully!");
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
 
     }
 }
