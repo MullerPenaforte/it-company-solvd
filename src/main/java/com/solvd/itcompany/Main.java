@@ -1,6 +1,8 @@
 package com.solvd.itcompany;
 
-
+import com.solvd.itcompany.enums.Department;
+import com.solvd.itcompany.enums.ProjectPriority;
+import com.solvd.itcompany.enums.SeniorityLevel;
 import com.solvd.itcompany.exceptions.InsufficientFundsException;
 import com.solvd.itcompany.exceptions.InvalidPriceException;
 import com.solvd.itcompany.exceptions.InvalidProgressException;
@@ -19,6 +21,7 @@ import com.solvd.itcompany.model.Pricing.ProgramPricing;
 import com.solvd.itcompany.model.SalesTeam.Sales;
 import com.solvd.itcompany.model.SalesTeam.SalesHardware;
 import com.solvd.itcompany.model.SalesTeam.SalesSoftware;
+import com.solvd.itcompany.model.Service.AccessService;
 import com.solvd.itcompany.model.Support.ClientSupport;
 import com.solvd.itcompany.model.Support.SupportHardware;
 import com.solvd.itcompany.model.Support.SupportSoftware;
@@ -26,6 +29,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
+
+import static com.solvd.itcompany.model.Service.AccessService.checkDepartmentAccess;
 
 public class Main {
     private static final Logger logger = LogManager.getLogger(Main.class);
@@ -196,6 +201,22 @@ public class Main {
 
         SystemMessage<Employee> employeeAlert = new SystemMessage<>(dev1);
         employeeAlert.printAlert("Accessing Financial Records");
+
+
+        Employee dev2 = new Employee("John", SeniorityLevel.SENIOR, Department.IT);
+
+        logger.info("Employee Created: " + dev2.getName());
+        logger.info("Seniority: " + dev2.getSeniority().getDescription());
+        logger.info("Department: " + dev2.getDepartment().getFullName());
+
+        checkDepartmentAccess(dev2.getDepartment());
+        checkDepartmentAccess(dev1.getDepartment());
+
+        ProjectPriority currentTask = ProjectPriority.HIGH;
+        AccessService.processTicket(currentTask);
+
+
+        AccessService.processTicket(ProjectPriority.URGENT);
 
 
     }
