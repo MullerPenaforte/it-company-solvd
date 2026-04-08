@@ -1,6 +1,7 @@
 package com.solvd.itcompany;
 
 import com.solvd.itcompany.enums.Department;
+import com.solvd.itcompany.enums.ProjectPriority;
 import com.solvd.itcompany.enums.SeniorityLevel;
 import com.solvd.itcompany.exceptions.InsufficientFundsException;
 import com.solvd.itcompany.exceptions.InvalidPriceException;
@@ -20,6 +21,7 @@ import com.solvd.itcompany.model.Pricing.ProgramPricing;
 import com.solvd.itcompany.model.SalesTeam.Sales;
 import com.solvd.itcompany.model.SalesTeam.SalesHardware;
 import com.solvd.itcompany.model.SalesTeam.SalesSoftware;
+import com.solvd.itcompany.model.Service.AccessService;
 import com.solvd.itcompany.model.Support.ClientSupport;
 import com.solvd.itcompany.model.Support.SupportHardware;
 import com.solvd.itcompany.model.Support.SupportSoftware;
@@ -209,6 +211,12 @@ public class Main {
 
         checkDepartmentAccess(dev2.getDepartment());
         checkDepartmentAccess(dev1.getDepartment());
+
+        ProjectPriority currentTask = ProjectPriority.HIGH;
+        AccessService.processTicket(currentTask);
+
+
+        AccessService.processTicket(ProjectPriority.URGENT);
 
 
     }
