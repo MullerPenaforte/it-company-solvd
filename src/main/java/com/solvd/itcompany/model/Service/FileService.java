@@ -1,31 +1,34 @@
 package com.solvd.itcompany.model.Service;
 
+import com.solvd.itcompany.interfaces.FileFormatter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FileService {
 
-    public static void countSpecialWords(String inputPath, String outputPath, String[] specialWords) throws IOException {
+    public static void countSpecialWords(String inputPath, String outputPath, String[] specialWords, FileFormatter formatter) throws IOException {
         File inputFile = new File(inputPath);
         File outputFile = new File(outputPath);
 
+        String content = FileUtils.readFileToString(inputFile, StandardCharsets.UTF_8).toLowerCase();
 
-        String content = FileUtils.readFileToString(inputFile, StandardCharsets.UTF_8);
+        // TRANSFORMANDO EM STREAM (Substituindo a iteração manual)
+        List<String> results = Arrays.stream(specialWords) // 1. Cria a Stream do Array
+                .map(word -> {
+                    int count = StringUtils.countMatches(content, word.toLowerCase());
+                    return formatter.format(word, count); // 2. Usa a Functional Interface
+                })
+                .collect(Collectors.toList()); // 3. Coleta em uma nova Lista
 
-        StringBuilder result = new StringBuilder();
-        result.append("--- New Scan ---\n");
-
-        for (String word : specialWords) {
-
-            int count = StringUtils.countMatches(content.toLowerCase(), word.toLowerCase());
-            result.append("Word '").append(word).append("' found: ").append(count).append(" times.\n");
-        }
-
-
-        FileUtils.writeStringToFile(outputFile, result.toString() + "\n", StandardCharsets.UTF_8, true);
+        // Escrevendo no arquivo usando Stream também
+        String finalReport = results.stream().collect(Collectors.joining("\n", "--- Report ---\n", "\n"));
+        FileUtils.writeStringToFile(outputFile, finalReport, StandardCharsets.UTF_8, true);
     }
 }
