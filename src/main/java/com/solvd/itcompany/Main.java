@@ -9,6 +9,9 @@ import com.solvd.itcompany.exceptions.InvalidProgressException;
 import com.solvd.itcompany.generics.Repository;
 import com.solvd.itcompany.generics.SystemMessage;
 import com.solvd.itcompany.generics.Validator;
+import com.solvd.itcompany.interfaces.AccessValidator;
+import com.solvd.itcompany.interfaces.DepartmentFilter;
+import com.solvd.itcompany.interfaces.FileFormatter;
 import com.solvd.itcompany.model.AboutProduct.Product;
 import com.solvd.itcompany.model.People.Employee;
 import com.solvd.itcompany.model.AboutProduct.ProgramProgress;
@@ -22,8 +25,10 @@ import com.solvd.itcompany.model.SalesTeam.Sales;
 import com.solvd.itcompany.model.SalesTeam.SalesHardware;
 import com.solvd.itcompany.model.SalesTeam.SalesSoftware;
 import com.solvd.itcompany.model.Service.AccessService;
+import com.solvd.itcompany.model.Service.EmployeeService;
 import com.solvd.itcompany.model.Service.FileService;
 import com.solvd.itcompany.model.Support.ClientSupport;
+import com.solvd.itcompany.model.Support.EmployeeFactory;
 import com.solvd.itcompany.model.Support.SupportHardware;
 import com.solvd.itcompany.model.Support.SupportSoftware;
 import org.apache.logging.log4j.LogManager;
@@ -224,12 +229,28 @@ public class Main {
 
         String[] wordsToFind = {"Responsibility", "Career", "Chaos", "Evolution", "Competence"};
 
+        FileFormatter myFormatter = (words, count) ->
+                String.format("[%s] -> Found %d times in the article", words.toUpperCase(), count);
+
+
         try {
-            FileService.countSpecialWords(inputPath, outputPath, wordsToFind);
-            System.out.println("Completed successfully!");
+            FileService.countSpecialWords(inputPath, outputPath, wordsToFind, myFormatter);
         } catch (IOException e) {
-            System.err.println("Error: " + e.getMessage());
+            logger.error("Error processing the file: " + e.getMessage());
         }
+
+
+        AccessValidator seniorityCheck = (employee, level) ->
+                employee.getSeniority().toString().equalsIgnoreCase(level);
+
+        AccessService.grantApproval(dev2, "SENIOR", (e, lvl) -> e.getSeniority().toString().equals(lvl));
+
+
+        List<Employee> staff = EmployeeFactory.createStaff();
+        DepartmentFilter itRule = (e, dept) -> e.getDepartment().toString().equals(dept);
+        List<Employee> itTeam = EmployeeService.filterByDepartment(staff, "IT", itRule);
+        logger.info("--- IT Department Staff ---");
+        itTeam.forEach(e -> logger.info("Employee found: {}", e.getName()));
 
     }
 }

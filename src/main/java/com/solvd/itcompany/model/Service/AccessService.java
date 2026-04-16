@@ -2,6 +2,8 @@ package com.solvd.itcompany.model.Service;
 
 import com.solvd.itcompany.enums.Department;
 import com.solvd.itcompany.enums.ProjectPriority;
+import com.solvd.itcompany.interfaces.AccessValidator;
+import com.solvd.itcompany.model.People.Employee;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,6 +40,14 @@ public class AccessService {
             logger.warn("ALERT: This is an urgent matter! Immediate action required.");
         } else {
             logger.info("Timeframe to resolve: " + priority.getDaysToResolve() + " day(s).");
+        }
+    }
+
+    public static void grantApproval(Employee emp, String level, AccessValidator validator) {
+        if (validator.validate(emp, level)) {
+            logger.info("Access GRANTED for: " + emp.getName());
+        } else {
+            logger.warn("Access DENIED for: " + emp.getName() + ". Required: " + level);
         }
     }
 }
