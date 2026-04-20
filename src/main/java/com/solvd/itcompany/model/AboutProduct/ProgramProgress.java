@@ -2,6 +2,7 @@ package com.solvd.itcompany.model.AboutProduct;
 
 import com.solvd.itcompany.model.People.Client;
 import com.solvd.itcompany.exceptions.InvalidProgressException;
+import com.solvd.itcompany.model.Records.ProductRecord;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +16,7 @@ public abstract class ProgramProgress {
         }
     }
 
-    public static void showProgress(Client client, Product progress) {
-        logger.info("Hello dear client {}, your app is {} % done already!", client.getName(), progress.getProgress());
+    public static void showProgress(Client client, ProductRecord progress) {
+        logger.info("Hello dear client {}, your app is {} % done already!", client.getName(), progress.progress());
     }
 }

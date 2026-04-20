@@ -4,7 +4,6 @@ import com.solvd.itcompany.enums.Department;
 import com.solvd.itcompany.enums.ProjectPriority;
 import com.solvd.itcompany.enums.SeniorityLevel;
 import com.solvd.itcompany.exceptions.InsufficientFundsException;
-import com.solvd.itcompany.exceptions.InvalidPriceException;
 import com.solvd.itcompany.exceptions.InvalidProgressException;
 import com.solvd.itcompany.generics.Repository;
 import com.solvd.itcompany.generics.SystemMessage;
@@ -12,7 +11,7 @@ import com.solvd.itcompany.generics.Validator;
 import com.solvd.itcompany.interfaces.AccessValidator;
 import com.solvd.itcompany.interfaces.DepartmentFilter;
 import com.solvd.itcompany.interfaces.FileFormatter;
-import com.solvd.itcompany.model.AboutProduct.Product;
+import com.solvd.itcompany.model.Records.ProductRecord;
 import com.solvd.itcompany.model.People.Employee;
 import com.solvd.itcompany.model.AboutProduct.ProgramProgress;
 import com.solvd.itcompany.model.Financial.BalanceSheet;
@@ -31,6 +30,13 @@ import com.solvd.itcompany.model.Support.ClientSupport;
 import com.solvd.itcompany.model.Support.EmployeeFactory;
 import com.solvd.itcompany.model.Support.SupportHardware;
 import com.solvd.itcompany.model.Support.SupportSoftware;
+import com.solvd.itcompany.model.Records.ProductRecord;
+import com.solvd.itcompany.model.Records.ProjectAssignment;
+import com.solvd.itcompany.model.Records.WordResult;
+import com.solvd.itcompany.model.Financial.BankAccount;
+import com.solvd.itcompany.model.People.Client;
+import com.solvd.itcompany.model.Service.ReflectionInspector;
+import java.time.LocalDate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -114,17 +120,16 @@ public class Main {
         BalanceSheet.updateBalance(program2, ope2, balanceSecondSemester.getTotalSavings());
         logger.info("/////////////////////////");
 
-        Product prod1 = new Product(1, clt1);
-        Product prod2 = new Product(56, clt2);
+        ProductRecord prod1 = new ProductRecord(1,500, clt1);
+        ProductRecord prod2 = new ProductRecord(56,900, clt2);
         ProgramProgress.showProgress(clt1, prod1);
         ProgramProgress.showProgress(clt2, prod2);
         logger.info("/////////////////////////");
 
-        List<Product> productHistory = new LinkedList<>();
+        List<ProductRecord> productHistory = new LinkedList<>();
         productHistory.add(prod1);
 
-        prod1.setProgress(22);
-        prod2.setProgress(69);
+
         ProgramProgress.showProgress(clt1, prod1);
         ProgramProgress.showProgress(clt2, prod2);
         logger.info("/////////////////////////");
@@ -164,23 +169,15 @@ public class Main {
             float newProgress2 = 150f;
 
             ProgramProgress.validateProgress(newProgress1);
-            prod1.setProgress(newProgress1);
+
 
             ProgramProgress.validateProgress(newProgress2);
-            prod2.setProgress(newProgress2);
+
 
         } catch (InvalidProgressException e) {
             logger.error("Error updating progress: {}", e.getMessage());
         }
 
-        try {
-            prod1.setPrice(1500.0);
-            logger.info("Product price set: $" + prod1.getPrice());
-
-            prod2.setPrice(-50.0);
-        } catch (InvalidPriceException e) {
-            logger.error("Pricing Error: {}", e.getMessage());
-        }
 
 
         Repository<Employee> employeeRepo = new Repository<>();
@@ -252,5 +249,27 @@ public class Main {
         logger.info("--- IT Department Staff ---");
         itTeam.forEach(e -> logger.info("Employee found: {}", e.getName()));
 
+
+
+        logger.info("--- STARTING REFLECTION TESTS ---");
+
+        WordResult word = new WordResult("Java", 25);
+        ReflectionInspector.analyzeObject(word);
+
+        ProductRecord product = new ProductRecord(0.75f, 1200.0, clt1);
+        ReflectionInspector.analyzeObject(product);
+
+        ProjectAssignment assignment = new ProjectAssignment(
+                "Alice Smith",
+                "Cloud Integration",
+                LocalDate.now()
+        );
+        ReflectionInspector.analyzeObject(assignment);
+
+        BankAccount account = new BankAccount(clt1, 987654, "jgosling", 50000.0);
+        ReflectionInspector.analyzeObject(account);
+
+        logger.info("--- REFLECTION TESTS COMPLETED ---");
     }
+
 }
