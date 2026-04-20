@@ -1,5 +1,6 @@
 package com.solvd.itcompany.model.Financial;
 
+import com.solvd.itcompany.interfaces.AuditOperation;
 import com.solvd.itcompany.model.People.Client;
 import com.solvd.itcompany.exceptions.InsufficientFundsException;
 import java.util.Objects;
@@ -44,6 +45,7 @@ public class BankAccount {
         this.balance += balance;
     }
 
+    @AuditOperation
     public void withdraw(double amount) throws InsufficientFundsException {
         if (amount > balance) {
             throw new InsufficientFundsException("Transaction failed: Insufficient funds. Current balance: $" + balance);
